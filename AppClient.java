@@ -5,36 +5,51 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class AppClient extends Application {
 
-    static Vec2d lastPos = null;
-    static final int WIDTH = 500, HEIGHT = 500;
+    private TicTacToeLogic gameLogic;
+    private Client client;
+    int playerId;
+    Button[] buttons;
+
+    public void createContent(GridPane gridPane){
+        buttons = new Button[9];
+        for(int i=0; i<9; ++i){
+            buttons[i] = new Button(" ");
+            final int id = i;
+            buttons[i].setOnAction(event -> {
+                String content = gameLogic.OnFieldClick(id, playerId);
+                if(content != null){
+                    buttons[id].setText(content);
+                    client.sendObject((byte)id);
+                }
+            });
+            gridPane.add(buttons[i], i/3, i%3);
+        }
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //Client client = new Client();
-       // client.connect();
+        client = new Client();
+        client.connect();
 
         ClientView view = new ClientView();
-        TicTacToeLogic gameLogic = new TicTacToeLogic();
-
-        int playerId = 0;
-        primaryStage.setScene(view.createTicTacToeScene(500, 500, playerId, gameLogic));
+        gameLogic = new TicTacToeLogic();
+        playerId = 0;
+        int opponentId = 1;
+        primaryStage.setScene(view.createTicTacToeScene(500, 500, this));
         primaryStage.show();
-/*
+
         Thread listeningThread = new Thread(){
             public void run(){
                 client.listenForObjects( (object) -> {
-                    byte line = (byte) object;
-                    graphicsContext.setFill(Color.BLACK);
-                    graphicsContext.setLineWidth(1);
-                    graphicsContext.moveTo(line.getStartX(), line.getStartY());
-                    graphicsContext.lineTo(line.getEndX(), line.getEndY());
-                    graphicsContext.stroke();
+                    byte point = (byte) object;
+                    buttons[point].setText(gameLogic.OnFieldClick(point, opponentId));
                 });
                 client.disconnect();
             }
@@ -47,7 +62,7 @@ public class AppClient extends Application {
             listeningThread.interrupt();
             client.disconnect();
         });
-        */
+
     }
 
     public static void main(String[] args){

@@ -5,16 +5,7 @@ public class Server {
 
     public static final int MAX_THREAD_COUNT = 5;
 
-    public ClientConnection[] clientConnections = new ClientConnection[MAX_THREAD_COUNT];
-
-    public void sendToAllClients(int current, Object object) throws IOException {
-        for(int i=0; i<MAX_THREAD_COUNT; ++i){
-            if(i == current) continue;
-            if(clientConnections[i] != null && clientConnections[i].connected){
-                clientConnections[i].sendObjectToClient(object);
-            }
-        }
-    }
+    public ClientGameConnection[] clientConnections = new ClientGameConnection[MAX_THREAD_COUNT];
 
     public void removeClient(int id){
         clientConnections[id] = null;
@@ -43,7 +34,7 @@ public class Server {
             int id = -1;
            while(true) {
                if((id = server.checkForEmptyClientSlots()) != -1) {
-                   server.clientConnections[id] = new ClientConnection(server, serverSocket, id);
+                   server.clientConnections[id] = new ClientGameConnection(server, serverSocket, id);
                }
            }
         } catch (IOException e) {

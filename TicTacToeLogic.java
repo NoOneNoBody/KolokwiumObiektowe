@@ -19,8 +19,6 @@ public class TicTacToeLogic {
         return null;
     }
 
-    private 
-
     public int getTurnId(){
         return playerTurn;
     }

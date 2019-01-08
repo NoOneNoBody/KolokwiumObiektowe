@@ -12,28 +12,16 @@ public class ClientView {
 
     private Label infoLabel;
 
-    private void createButtons(GridPane gridPane, int playerId, TicTacToeLogic gameLogic){
-        Button[] buttons = new Button[9];
-        for(int i=0; i<9; ++i){
-            buttons[i] = new Button(" ");
-            final int id = i;
-            buttons[i].setOnAction(event -> {
-                String content = gameLogic.OnFieldClick(id, playerId);
-                if(content != null)
-                    buttons[id].setText(content);
-            });
-            gridPane.add(buttons[i], i/3, i%3);
-        }
-    }
 
-    public Scene createTicTacToeScene(final int width, final int height, int playerId, TicTacToeLogic gameLogic){
+
+    public Scene createTicTacToeScene(final int width, final int height, AppClient controler){
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(25, 25, 25, 25));
 
-        createButtons(gridPane, playerId, gameLogic);
+        controler.createContent(gridPane);
 
         infoLabel = new Label();
         gridPane.add(infoLabel, 9, 0);
