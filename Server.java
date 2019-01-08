@@ -1,9 +1,12 @@
 import java.io.*;
 import java.net.*;
+import java.sql.Connection;
 
 public class Server {
 
     public static final int MAX_THREAD_COUNT = 5;
+
+    public Connection connection;
 
     public ClientGameConnection[] clientConnections = new ClientGameConnection[MAX_THREAD_COUNT];
 
@@ -22,6 +25,7 @@ public class Server {
 
     public static void main(String[] args){
         Server server = new Server();
+        server.connection = DB.connect("mwarzech", "mwarzech", "V7yQEkkTWKvEGTM6");
 
         ServerSocket serverSocket = null;
         try {

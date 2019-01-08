@@ -31,6 +31,11 @@ public class ClientGameConnection {
                 Object inputObject;
                 while ((inputObject = in1.readObject()) != null) {
                     sendObjectToClient(1 , inputObject);
+                    if((byte)inputObject == (byte)10 || (byte)inputObject == (byte)11){
+                        sendObjectToClient(0 , inputObject);
+                        DB.executeInput(server.connection, (byte)inputObject-10);
+                        break;
+                    }
                 }
                 sendObjectToClient(0, null);
                 server.removeClient(index);
@@ -47,6 +52,11 @@ public class ClientGameConnection {
                 Object inputObject;
                 while ((inputObject = in2.readObject()) != null) {
                     sendObjectToClient(0 , inputObject);
+                    if((byte)inputObject == (byte)10 || (byte)inputObject == (byte)11){
+                        sendObjectToClient(1 , inputObject);
+                        DB.executeInput(server.connection, (byte)inputObject-10);
+                        break;
+                    }
                 }
                 sendObjectToClient( 1, null);
                 server.removeClient(index);

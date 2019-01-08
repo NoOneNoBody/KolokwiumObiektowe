@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -16,7 +17,9 @@ public class AppClient extends Application {
     private TicTacToeLogic gameLogic;
     private Client client;
     int playerId;
+
     Button[] buttons;
+    Label infoLabel;
 
     private void setButtonText(int buttonId, String buttonText){
         buttons[buttonId].setText(buttonText);
@@ -36,6 +39,8 @@ public class AppClient extends Application {
             });
             gridPane.add(buttons[i], i/3, i%3);
         }
+        infoLabel = new Label();
+        gridPane.add(infoLabel, 3, 3);
     }
 
     @Override
@@ -66,10 +71,21 @@ public class AppClient extends Application {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            if(point == 10 || point == 11) {
+                                if((point-10) == playerId){
+                                    infoLabel.setText("You Win!");
+                                } else {
+                                    infoLabel.setText("You Lost!");
+                                }
+                            } else {
                                 setButtonText(point, gameLogic.OnFieldClick(point, opponentId));
+                                int gameState = gameLogic.getGameState();
+                                if(gameState != -1){
+                                    client.sendObject((byte)(gameState+10));
+                                }
+                            }
                         }
                     });
-                    //setButtonText((int)point, gameLogic.OnFieldClick(point, opponentId));
                 });
                 client.disconnect();
             }
