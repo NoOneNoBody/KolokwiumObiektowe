@@ -1,5 +1,6 @@
 import com.sun.javafx.geom.Vec2d;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -16,6 +17,10 @@ public class AppClient extends Application {
     private Client client;
     int playerId;
     Button[] buttons;
+
+    private void setButtonText(int buttonId, String buttonText){
+        buttons[buttonId].setText(buttonText);
+    }
 
     public void createContent(GridPane gridPane){
         buttons = new Button[9];
@@ -40,8 +45,15 @@ public class AppClient extends Application {
 
         ClientView view = new ClientView();
         gameLogic = new TicTacToeLogic();
-        playerId = 0;
-        int opponentId = 1;
+        client.listenForObject( object -> {
+            playerId = (int)object;
+        });
+        int opponentId;
+        if(playerId == 0){
+            opponentId = 1;
+        } else {
+            opponentId = 0;
+        }
         primaryStage.setScene(view.createTicTacToeScene(500, 500, this));
         primaryStage.show();
 
@@ -49,7 +61,15 @@ public class AppClient extends Application {
             public void run(){
                 client.listenForObjects( (object) -> {
                     byte point = (byte) object;
-                    buttons[point].setText(gameLogic.OnFieldClick(point, opponentId));
+                    System.out.println(point);
+                    final int p = (int)point;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                                setButtonText(point, gameLogic.OnFieldClick(point, opponentId));
+                        }
+                    });
+                    //setButtonText((int)point, gameLogic.OnFieldClick(point, opponentId));
                 });
                 client.disconnect();
             }

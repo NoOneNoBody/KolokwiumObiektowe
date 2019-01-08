@@ -19,7 +19,9 @@ public class ClientGameConnection {
     public ClientGameConnection(Server server, ServerSocket serverSocket, int index) throws IOException {
         this.index = index;
         socket1 = serverSocket.accept();
+        sendObjectToClient(0, 0);
         socket2 = serverSocket.accept();
+        sendObjectToClient(1, 1);
 
         connectionThread1 = new Thread(() -> {
             try {

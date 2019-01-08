@@ -32,6 +32,20 @@ public class Client{
         }
     }
 
+    public void listenForObject(ReceiveObjectListener listener){
+        try {
+            if(in == null) {
+                in = new ObjectInputStream(socket.getInputStream());
+            }
+            Object inputObject;
+            inputObject = in.readObject();
+            listener.onReceive(inputObject);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void listenForObjects(ReceiveObjectListener listener){
         try {
             if(in == null) {
